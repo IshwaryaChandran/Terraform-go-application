@@ -15,38 +15,37 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-//Goal represents a goal item in our application
+// Goal represents a goal item in our application
 type Goal struct {
-	ID   int    'json:"ID"'
-	Name string 'json:"Name"'
+	ID   int    `json:"ID"`
+	Name string `json:"Name"`
 }
 
 // Define Prometheus metrics
 var (
-    addGoalCpunter = prometheus.NewCounter(prometheus.CounterOpts{
-	    Name: "add_goal_requests_total",
+	addGoalCounter = prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "add_goal_requests_total",
 		Help: "Total number of add goal requests",
-     })
+	})
 	removeGoalCounter = prometheus.NewCounter(prometheus.CounterOpts{
-	    Name: "remove_goal_requests_total",
+		Name: "remove_goal_requests_total",
 		Help: "Total number of remove goal requests",
-        })
-	httpRequestCounter = prometheus.NewCounterVec(
-	    prometheus.counterOpts{
-		    Name: "http_requests_total",
+	})
+	httpRequestsCounter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "http_requests_total",
 			Help: "Total number of HTTP requests",
-			},
-			[]string{"path"},
-		)	
-			
+		},
+		[]string{"path"},
 	)
+)
 
-	func init() {
-	  // Register Prometheus metrics
-	  prometheus.MustRegister(addGoalCounter)
-	  prometheus.MustRegister(removeGoalCounter)
-	  prometheus.MustRegister(httpRequestCounter)
- }
+func init() {
+	// Register Prometheus metrics
+	prometheus.MustRegister(addGoalCounter)
+	prometheus.MustRegister(removeGoalCounter)
+	prometheus.MustRegister(httpRequestsCounter)
+}
 
 func createConnection() (*sql.DB, error) {
 	connStr := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=%s",
